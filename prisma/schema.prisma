@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id_admin Int    @id @default(autoincrement())
+  username String
+  password String
+}
+
+model antrian_pmb {
+  id_antrian      Int      @id @default(autoincrement())
+  no_antrian      String
+  tanggal_antrian DateTime
+  waktu_antrian   DateTime @db.Time
+  status          Boolean  @default(false)
+}
+
+model antrian_student {
+  id_antrian        Int             @id @default(autoincrement())
+  no_antrian        String          @db.VarChar(10)
+  mahasiswa         mahasiswa       @relation(fields: [no_rfid], references: [no_rfid])
+  no_rfid           String          @db.VarChar(80)
+  pelayanan         jenis_pelayanan @relation(fields: [id_jenispelayanan], references: [id_jenispelayanan])
+  id_jenispelayanan Int
+  nama_pelayanan    String          @db.VarChar(100)
+  tanggal_antrian   DateTime
+  waktu_antrian     DateTime        @db.Time
+  status            Boolean         @default(false)
+}
+
+model mahasiswa {
+  nim     String            @unique @db.VarChar(10)
+  no_rfid String            @id @db.VarChar(80)
+  nama    String            @db.VarChar(80)
+  prodi   String            @db.VarChar(80)
+  rfid    antrian_student[]
+}
+
+model loket {
+  no_loket          Int             @id
+  pelayanan         jenis_pelayanan @relation(fields: [id_jenispelayanan], references: [id_jenispelayanan])
+  id_jenispelayanan Int
+  keterangan        String          @db.VarChar(100)
+  lokets            operator[]
+}
+
+model jenis_pelayanan {
+  id_jenispelayanan Int               @id @default(autoincrement())
+  nama_pelayanan    String            @db.VarChar(100)
+  keterangan        String            @db.Text
+  lokets            loket[]
+  pelayanan         antrian_student[]
+}
+
+model antrian_terlayani {
+  id                      Int      @id @default(autoincrement())
+  id_jenispelayanan       Int
+  no_loket                Int
+  no_antrian              String   @db.VarChar(10)
+  no_rfid                 String   @db.VarChar(100)
+  operators               operator @relation(fields: [operator], references: [id_operator])
+  operator                Int
+  tanggal_pelayanan       DateTime
+  waktu_pelayanan         DateTime @db.Time
+  waktu_selesai_pelayanan DateTime @db.Time
+}
+
+model operator {
+  id_operator Int                 @id @default(autoincrement())
+  lokets      loket               @relation(fields: [no_loket], references: [no_loket])
+  no_loket    Int
+  nama        String              @db.VarChar(60)
+  username    String              @db.VarChar(20)
+  password    String              @db.VarChar(100)
+  isOnline    online_status
+  operators   antrian_terlayani[]
+}
+
+enum online_status {
+  ONLINE
+  OFFLINE
+}
+
+model banner {
+  id_banner   Int    @id @default(autoincrement())
+  judul       String @db.VarChar(40)
+  banner_img  String @db.VarChar(100)
+  tgl_posting String @db.VarChar(10)
+}
+
+model berita {
+  id_berita   Int    @id @default(autoincrement())
+  judul       String @db.VarChar(80)
+  isi         String @db.Text
+  foto        String @db.VarChar(100)
+  tgl_posting String @db.VarChar(20)
+  tgl_expire  String @db.VarChar(30)
+}
+
+model loket_pmb {
+  no_loket    Int @id
+  id_operator Int
+}
+
+model operator_pmb {
+  id_operator Int    @id @default(autoincrement())
+  no_loket    Int
+  nama        String @db.VarChar(100)
+  username    String @db.VarChar(100)
+  password    String @db.VarChar(100)
+}
+
+model pelayanan {
+  id_pelayanan      Int    @id @default(autoincrement())
+  id_jenispelayanan Int
+  nama_pelayanan    String @db.VarChar(80)
+  keterangan        String @db.Text
+}
+
+model selesai_pmb {
+  id                      Int         @id @default(autoincrement())
+  no_antrian              String      @db.VarChar(10)
+  no_loket                Int
+  id_operator             Int
+  tanggal_pelayanan       DateTime
+  waktu_pelayanan         DateTime    @db.Time
+  waktu_selesai_pelayanan DateTime    @db.Time
+  puas                    puas_status @default(TIDAK)
+}
+
+enum puas_status {
+  YA
+  TIDAK
+}
+
+model sub_pelayanan {
+  id_subpelayanan   Int    @id @default(autoincrement())
+  id_pelayanan      Int
+  nama_subpelayanan String @db.VarChar(100)
+  keterangan        String @db.Text
+}
+
+model temp {
+  id         Int     @id @default(autoincrement())
+  id_antrian Int
+  no_loket   String? @db.VarChar(11)
+  no_antrian String? @db.VarChar(11)
+  nim        String  @db.VarChar(100)
+  nama       String  @db.VarChar(100)
+}
+
+model temp_pmb {
+  id         Int    @id @default(autoincrement())
+  id_antrian Int
+  no_loket   Int
+  no_antrian String @db.VarChar(10)
+}
+
+model video {
+  id_video    Int    @id @default(autoincrement())
+  judul       String @db.VarChar(80)
+  video       String @db.VarChar(100)
+  tgl_posting String @db.VarChar(20)
+}

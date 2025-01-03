@@ -25,8 +25,8 @@ model antrian_student {
   id_antrian        Int             @id @default(autoincrement())
   no_antrian        String          @db.VarChar(10)
   mahasiswa         mahasiswa       @relation(fields: [no_rfid], references: [no_rfid])
-  no_rfid           String          @db.VarChar(80)
-  pelayanan         jenis_pelayanan @relation(fields: [id_jenispelayanan], references: [id_jenispelayanan])
+  no_rfid           String
+  pelayanan         jenis_pelayanan @relation(fields: [id_jenispelayanan], references: [id_jenispelayanan], onDelete: Cascade, onUpdate: Cascade)
   id_jenispelayanan Int
   nama_pelayanan    String          @db.VarChar(100)
   tanggal_antrian   DateTime
@@ -35,8 +35,8 @@ model antrian_student {
 }
 
 model mahasiswa {
+  no_rfid String            @id
   nim     String            @unique @db.VarChar(10)
-  no_rfid String            @id @db.VarChar(80)
   nama    String            @db.VarChar(80)
   prodi   String            @db.VarChar(80)
   rfid    antrian_student[]
@@ -44,7 +44,7 @@ model mahasiswa {
 
 model loket {
   no_loket          Int             @id
-  pelayanan         jenis_pelayanan @relation(fields: [id_jenispelayanan], references: [id_jenispelayanan])
+  pelayanan         jenis_pelayanan @relation(fields: [id_jenispelayanan], references: [id_jenispelayanan], onDelete: Cascade, onUpdate: Cascade)
   id_jenispelayanan Int
   keterangan        String          @db.VarChar(100)
   lokets            operator[]
@@ -64,7 +64,7 @@ model antrian_terlayani {
   no_loket                Int
   no_antrian              String   @db.VarChar(10)
   no_rfid                 String   @db.VarChar(100)
-  operators               operator @relation(fields: [operator], references: [id_operator])
+  operators               operator @relation(fields: [operator], references: [id_operator], onDelete: Cascade, onUpdate: Cascade)
   operator                Int
   tanggal_pelayanan       DateTime
   waktu_pelayanan         DateTime @db.Time
@@ -73,7 +73,7 @@ model antrian_terlayani {
 
 model operator {
   id_operator Int                 @id @default(autoincrement())
-  lokets      loket               @relation(fields: [no_loket], references: [no_loket])
+  lokets      loket               @relation(fields: [no_loket], references: [no_loket], onDelete: Cascade, onUpdate: Cascade)
   no_loket    Int
   nama        String              @db.VarChar(60)
   username    String              @db.VarChar(20)
@@ -88,19 +88,19 @@ enum online_status {
 }
 
 model banner {
-  id_banner   Int    @id @default(autoincrement())
-  judul       String @db.VarChar(40)
-  banner_img  String @db.VarChar(100)
-  tgl_posting String @db.VarChar(10)
+  id_banner   Int      @id @default(autoincrement())
+  judul       String   @db.VarChar(40)
+  banner_img  String   @db.VarChar(100)
+  tgl_posting DateTime
 }
 
 model berita {
-  id_berita   Int    @id @default(autoincrement())
-  judul       String @db.VarChar(80)
-  isi         String @db.Text
-  foto        String @db.VarChar(100)
-  tgl_posting String @db.VarChar(20)
-  tgl_expire  String @db.VarChar(30)
+  id_berita   Int      @id @default(autoincrement())
+  judul       String   @db.VarChar(80)
+  isi         String   @db.Text
+  foto        String   @db.VarChar(100)
+  tgl_posting DateTime
+  tgl_expire  DateTime
 }
 
 model loket_pmb {
@@ -163,8 +163,8 @@ model temp_pmb {
 }
 
 model video {
-  id_video    Int    @id @default(autoincrement())
-  judul       String @db.VarChar(80)
-  video       String @db.VarChar(100)
-  tgl_posting String @db.VarChar(20)
+  id_video    Int      @id @default(autoincrement())
+  judul       String   @db.VarChar(80)
+  video       String   @db.VarChar(100)
+  tgl_posting DateTime
 }

@@ -9,5 +9,10 @@ const path = require('path');
 
 */
 module.exports = (res, service, view, data = {}) => {
-  return res.render(path.join(__dirname, `../services/${service}/views/${view}.ejs`), data);
+  // return res.render(path.join(__dirname, `../services/${service}/views/${view}.ejs`), data);
+  return res.json({
+    service: service,
+    view: view,
+    data: data
+  });
 }
